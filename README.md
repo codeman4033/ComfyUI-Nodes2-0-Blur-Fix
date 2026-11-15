@@ -23,7 +23,7 @@ No Python packages, frontend build steps, or manual configuration are required.
 - ComfyUI with **Nodes 2.0** enabled.
 - A frontend version that uses the `[data-testid="transform-pane"]` element and the `scale3d(...)` followed by `translate3d(...)` transform format.
 
-Tested with ComfyUI frontend **1.61.2** in Firefox. Other frontend versions and browsers have not yet been independently verified.
+Tested with ComfyUI frontend **1.61.2** in Firefox. Other frontend versions and browsers have not yet been tested.
 
 ## How it works
 
