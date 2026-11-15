@@ -29,11 +29,9 @@ app.registerExtension({
 
             if (!Number.isFinite(tx) || !Number.isFinite(ty)) return;
 
-            // Preserve the original screen-space translation while using
-            // individual CSS transforms instead of CSS zoom.
-            pane.style.translate = `${tx * scale}px ${ty * scale}px`;
-            pane.style.scale = String(scale);
-            pane.style.transform = "none";
+            // Keep the same matrix while expressing it through transform functions.
+            // The scaled translation preserves the original screen-space position.
+            pane.style.transform = `translate3d(${tx * scale}px, ${ty * scale}px, 0px) scale3d(${scale}, ${scale}, 1)`;
         };
 
         const observer = new MutationObserver((mutations) => {
