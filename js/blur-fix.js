@@ -8,30 +8,22 @@ app.registerExtension({
             if (!pane) return;
 
             const transform = pane.style.transform;
-            const match = transform.match(
-                /scale3d\(([-\d.]+),\s*([-\d.]+),\s*([-\d.]+)\)\s*translate3d\(([^)]+)\)/
-            );
+            
+            let match = /scale3d\(([\d.]+),\s*[\d.]+,\s*[\d.]+\)\s*translate3d\(([-\d.]+)px,\s*([-\d.]+)px,\s*0(?:px)?\)/.exec(transform)
 
             if (!match) return;
 
-            const [, sx, sy, sz, translation] = match;
-            const scale = Number(sx);
+            let [, camZ, camX, camY] = match;
+            const scale = Number(camZ);
+            const tx = Number(camX);
+            const ty = Number(camY);
+            
+            // Preserve the original transform's effective screen-space translation.
+            pane.style.translate = `${tx * scale}px ${ty * scale}px`;
+            pane.style.scale = String(scale);
 
-            if (
-                !Number.isFinite(scale) ||
-                Math.abs(scale - Number(sy)) > 0.00001 ||
-                Math.abs(scale - Number(sz)) > 0.00001
-            ) {
-                return;
-            }
-
-            const [tx, ty] = translation.split(",").map((value) => parseFloat(value));
-
-            if (!Number.isFinite(tx) || !Number.isFinite(ty)) return;
-
-            // Keep the same matrix while expressing it through transform functions.
-            // The scaled translation preserves the original screen-space position.
-            pane.style.transform = `translate3d(${tx * scale}px, ${ty * scale}px, 0px) scale3d(${scale}, ${scale}, 1)`;
+            // Avoid applying the original transform a second time.
+            pane.style.transform = "none";
         };
 
         const observer = new MutationObserver((mutations) => {
